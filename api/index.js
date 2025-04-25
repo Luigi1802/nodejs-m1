@@ -6,6 +6,9 @@ const authRoutes = require('./routes/authRoutes');
 const equipmentRoutes = require('./routes/equipmentRoutes');
 const customerRequestRoutes = require('./routes/customerRequestRoutes');
 
+// Rappel des réservations à retourner
+const reservationReminder = require('./utils/reminderService');
+
 // Chargement variables d'environnement 
 dotenv.config();
 
