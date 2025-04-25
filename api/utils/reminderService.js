@@ -29,10 +29,10 @@ cron.schedule('*/1 * * * *', async () => {
                 }
                 
                 // Prépation de l'email de rappel
-                const mailObject = "Rappel concernant votre réservation";
-                const mailBody = `Bonjour, merci de ne pas oublier de ramener l'équipement que vous avez réservé.\n
-                Vous avez réservé l'équipement "${equipment.name}" et il doit être retourné avant le 
-                ${rental.end_date.toLocaleDateString()}.\n\nMerci de votre compréhension.\n`;
+                const mailObject = "Reminder about your reservation";
+                const mailBody = `Hello, please remember to return the equipment you reserved.\n
+                You reserved the equipment "${equipment.name}" and it must be returned before 
+                ${rental.end_date.toLocaleDateString()}.\n\nThank you for your understanding.\n`;
 
                 // Envoi de l'email de rappel
                 await sendEmail(

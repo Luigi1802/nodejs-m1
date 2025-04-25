@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 
 // Schéma des utilisateurs (admin et customer)
 const UserModel = new mongoose.Schema({
+    username: { type: String, required: true, unique: true },
     email: { type: String, required: true,  match: [/\S+@\S+\.\S+/, 'Invalid email'], unique: true },
     password: { type: String, required: true },
     blocked: { type: Boolean, required: false, default: false },
