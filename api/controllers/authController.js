@@ -30,16 +30,20 @@ exports.login = async (req, res) => {
 
 // Fonction pour l'inscription de l'utilisateur
 exports.register = async (req, res) => {
-  const { email, password} = req.body;
+  const {username, email, password} = req.body;
   try {
     // Vérification de l'existence de l'utilisateur (il ne doit pas exister)
-    const userExists = await User.findOne({ email });
-    if (userExists) {
+    const emailExists = await User.findOne({ email });
+    const usernameExists = await User.findOne({ email });
+    if (emailExists) {
       return res.status(400).json({ message: 'Email already used' });
+    }
+    if (usernameExists) {
+      return res.status(400).json({ message: 'Username already used' });
     }
 
     // Création de l'utilisateur (customer par défaut)
-    const newUser = new User({ email, password, role: "customer" });
+    const newUser = new User({username, email, password, role: "customer" });
     await newUser.save();
 
     res.status(201).json({ message: 'User successfully created' });
@@ -65,7 +69,7 @@ exports.forgotPassword = async (req, res) => {
     const resetLink = `${process.env.CLIENT_URL}/reset-password/${token}`;
 
     // Envoi de l'email avec le lien du front pour réinitialiser le mot de passe (token dans l'URL)
-    await sendEmail(email, 'Réinitialisation du mot de passe', `Cliquez ici pour réinitialiser votre mot de passe: ${resetLink}\nCe lien est valable 15 minutes.`);
+    await sendEmail(email, 'Reset your password', `Click on the following link to change your password : ${resetLink}\nThe link is available for 15 minutes.`);
 
     res.json({ message: 'Reset password email sent' });
   } catch (err) {

@@ -1,78 +1,62 @@
 <template>
-    <v-form v-model="valid" @submit.prevent="submitForm">
+    <v-form ref="form" v-model="valid" @submit.prevent="submitForm">
         <v-container>
             <v-row>
                 <v-col cols="12" md="4">
-                    <v-text-field v-model="username" :rules="usernameRules" label="username"
-                        required></v-text-field>
+                    <v-text-field v-model="username" :rules="usernameRules" label="Username" required />
                 </v-col>
 
                 <v-col cols="12" md="4">
-                    <v-text-field v-model="email" :rules="emailRules" label="email" required></v-text-field>
+                    <v-text-field v-model="email" :rules="emailRules" label="Email" required />
                 </v-col>
 
                 <v-col cols="12" md="4">
-                    <v-text-field v-model="password" label="password" required></v-text-field>
+                    <v-text-field v-model="password" label="Password" required />
                 </v-col>
             </v-row>
-            <v-btn variant="outlined" @click="submitForm">
-                Register
-            </v-btn>
+
+            <v-btn type="submit" variant="outlined">Register</v-btn>
         </v-container>
     </v-form>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue'
 import { register } from '../services/authService'
 
-export default {
-    data: () => ({
-        valid: false,
-        username: '',
-        usernameRules: [
-            value => {
-                if (value) return true
+// Refs
+const form = ref(null)
+const valid = ref(false)
 
-                return 'Username is required.'
-            }
-        ],
-        email: '',
-        emailRules: [
-            value => {
-                if (value) return true
+const username = ref('')
+const email = ref('')
+const password = ref('')
 
-                return 'E-mail is required.'
-            },
-            value => {
-                if (/.+@.+\..+/.test(value)) return true
+// Validation rules
+const usernameRules = [
+    v => !!v || 'Username is required.'
+]
 
-                return 'E-mail must be valid.'
-            },
-        ],
-        password: '',
+const emailRules = [
+    v => !!v || 'E-mail is required.',
+    v => /.+@.+\..+/.test(v) || 'E-mail must be valid.'
+]
 
-    }),
-    methods: {
-        // Méthode pour soumettre le formulaire
-        async submitForm() {
-            if (this.$refs.form.validate()) {  // Vérifier si le formulaire est valide
-                const formData = {
-                    username: this.username,
-                    email: this.email,
-                    password: this.password,
-                };
+// Submit handler
+const submitForm = async () => {
+    const isValid = await form.value?.validate()
+    if (isValid) {
+        const formData = {
+            username: username.value,
+            email: email.value,
+            password: password.value,
+        }
 
-                try {
-                    // Appel au service d'enregistrement
-                    const result = await register(formData);
-                    console.log('Registration successful:', result);
-                    // Gestion de la réponse de l'API
-                    // Par exemple, rediriger l'utilisateur ou afficher un message de succès
-                } catch (error) {
-                    console.error('Registration failed', error);
-                    // Gérer l'erreur d'inscription ici (affichage d'un message d'erreur, etc.)
-                }
-            }
+        try {
+            const result = await register(formData)
+            console.log('Registration successful:', result)
+        } catch (error) {
+            console.error('Registration failed:', error)
         }
     }
 }

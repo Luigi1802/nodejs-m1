@@ -6,6 +6,9 @@ const authRoutes = require('./routes/authRoutes');
 const equipmentRoutes = require('./routes/equipmentRoutes');
 const customerRequestRoutes = require('./routes/customerRequestRoutes');
 
+// Rappel des réservations à retourner
+const reservationReminder = require('./utils/reminderService');
+
 // Chargement variables d'environnement 
 dotenv.config();
 
@@ -15,9 +18,6 @@ connectDB();
 const app = express();
 app.use(express.json());
 app.use(cors());
-
-// Routes générales
-app.get('/', (req, res) => {res.status(200).json({ message: 'API reachable' });});
 
 app.use('/api/auth', authRoutes);
 app.use('/api/equipments', equipmentRoutes);

@@ -140,13 +140,13 @@ exports.updateRequest = async (req, res) => {
         request.save();
       }
       // Envoi de l'email de confirmation
-      mailObject = request.request_type === 'rental' ? 'Confirmation de réservation' : 'Confirmation de retour';
-      mailBody = request.request_type === 'rental' ? 
-        `Votre réservation pour le matériel "${equipment.name}" a été acceptée.\n
-        Vous pouvez venir le récupérer dès à présent.\n
-        Merci de retourner le produit d'ici ${RENTAL_DURATION_IN_DAYS} jours à partir d'aujourd'hui.\n` :
-        `Votre retour pour le matériel "${equipment.name}" a été accepté.\n
-        Bonne journée.\n`;
+      mailObject = request.request_type === 'rental' ? 'Rental confirmation' : 'Return confirmation';
+      mailBody = request.request_type === 'rental' ?
+        `Your reservation for the equipment "${equipment.name}" has been approved.\n
+        You can come and pick it up right away.\n
+        Please return the item within ${RENTAL_DURATION_IN_DAYS} days from today.\n` :
+        `Your return for the equipment "${equipment.name}" has been approved.\n
+        Have a nice day.\n`;
       await sendEmail(
         customer.email,
         mailObject,
@@ -157,10 +157,10 @@ exports.updateRequest = async (req, res) => {
       equipment.status = request.request_type === 'return' ? 'unavailable' : 'available';
       await equipment.save();
       // Envoi de l'email de confirmation
-      mailObject = request.request_type === 'rental' ? 'Refus de la réservation' : 'Refus du retour';
-      mailBody = request.request_type === 'rental' ? 
-        `Votre réservation pour le matériel "${equipment.name}" a été refusée.` :
-        `Votre retour pour le matériel "${equipment.name}" a été refusé.`;
+      mailObject = request.request_type === 'rental' ? 'Reservation rejected' : 'Return rejected';
+      mailBody = request.request_type === 'rental' ?
+        `Your reservation for the equipment "${equipment.name}" has been rejected.` :
+        `Your return for the equipment "${equipment.name}" has been rejected.`;
       await sendEmail(
         customer.email,
         mailObject,
