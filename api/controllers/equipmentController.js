@@ -1,6 +1,6 @@
 const Equipment = require('../models/Equipment');
 
-// Ajouter un nouveau matériel
+// Ajouter un nouvel équipement
 exports.addEquipment = async (req, res) => {
   const { name, description, serial_number, picture, status, state } = req.body;
   try {
@@ -13,7 +13,7 @@ exports.addEquipment = async (req, res) => {
   }
 };
 
-// Mettre à jour un matériel existant
+// Mettre à jour un équipement existant
 exports.updateEquipment = async (req, res) => {
   const { id } = req.params;
   const { name, description, serial_number, picture, status, state } = req.body;
@@ -23,6 +23,7 @@ exports.updateEquipment = async (req, res) => {
       { name, description, serial_number, picture, status, state },
       { new: true }
     );
+    // Verifier si l'équipement existe
     if (!equipment) {
       return res.status(404).json({ message: 'Equipment not found' });
     }
@@ -33,11 +34,12 @@ exports.updateEquipment = async (req, res) => {
   }
 };
 
-// Supprimer un matériel
+// Supprimer un équipement
 exports.deleteEquipment = async (req, res) => {
   const { id } = req.params;
   try {
     const equipment = await Equipment.findByIdAndDelete(id);
+    // Vérifier si l'équipement existe
     if (!equipment) {
       return res.status(404).json({ message: 'Equipment not found' });
     }

@@ -4,16 +4,15 @@ const authMiddleware = require('../middlewares/authMiddleware');
 const roleMiddleware = require('../middlewares/roleMiddleware');
 const router = express.Router();
 
-// create a new customer request
+// Routes pour la gestion des demandes de matériel (réservations et retours)
+
+// POST /api/customer-requests : Ajouter une demande (customer uniquement)
 router.post('/', authMiddleware, customerRequestController.createRequest);
-
-// get all customer requests
-router.get('/', authMiddleware, customerRequestController.getRequests);
-
-// get all customer requests
+// GET /api/customer-requests : Voir toutes les demandes (admin uniquement)
+router.get('/', authMiddleware, roleMiddleware('admin'), customerRequestController.getRequests);
+// GET /api/customer-requests/my-requests : Voir toutes les demandes pour un customer (customer uniquement)
 router.get('/my-requests', authMiddleware, customerRequestController.getCustomerRequests);
-
-// get a customer request by id
+// PUT /api/customer-requests/:id : Modifier une demande (accepter/refuser, admin uniquement)
 router.put('/:id', authMiddleware, roleMiddleware('admin'), customerRequestController.updateRequest);
 
 module.exports = router;

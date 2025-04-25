@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
 
+// Durée de location par défaut (en jours)
 const RENTAL_DURATION_IN_DAYS = parseInt(process.env.RENTAL_DURATION_IN_DAYS) || 30; 
 
+// Schema des demandes de réservation/retour d'équipement
 const CustomerRequestModel = new mongoose.Schema(
     {
         customer: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
@@ -17,11 +19,10 @@ const CustomerRequestModel = new mongoose.Schema(
     }
 );
 
-// Autocomplete start_date and end_date
+// Autocomplétion de la date de fin si elle n'est pas fournie
 CustomerRequestModel.pre('save', function (next) {
   
     if (!this.end_date && this.start_date) {
-      // Set the end_date to 30 days after the start_date
       const endDate = new Date(this.start_date);
       endDate.setDate(endDate.getDate() + RENTAL_DURATION_IN_DAYS);
       this.end_date = endDate;
