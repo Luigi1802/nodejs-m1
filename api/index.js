@@ -17,6 +17,8 @@ app.use(express.json());
 app.use(cors());
 
 // Routes générales
+app.get('/', (req, res) => {res.status(200).json({ message: 'API reachable' });});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/equipments', equipmentRoutes);
 app.use('/api/customer-requests', customerRequestRoutes);
