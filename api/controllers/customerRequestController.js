@@ -36,7 +36,7 @@ exports.createRequest = async (req, res) => {
 
       // Vérifier que le client est celui qui a fait cette demande
       if (!lastRentalRequest || lastRentalRequest.customer.toString() !== customer._id.toString()) {
-        return res.status(400).json({ message: 'You are not the last customer who rented this equipment' });
+        return res.status(400).json({ message: 'You are not the customer who rented this equipment' });
       }
     }
 
@@ -92,6 +92,10 @@ exports.updateRequest = async (req, res) => {
       return res.status(404).json({ message: 'Request not found' });
     }
 
+    if (request.status !== 'pending') {
+      return res.status(400).json({ message: 'Request already processed' }); 
+    }
+
     const customer = await User.findById(request.customer);
     if (!customer) {
       return res.status(404).json({ message: 'Customer not found' });
@@ -109,8 +113,8 @@ exports.updateRequest = async (req, res) => {
 
     // Modification de l'état du matériel
     if (VALID_STATES.includes(state)) {
-        request.equipment.state = state;
-        await request.equipment.save();
+        equipment.state = state;
+        await equipment.save();
         // Mise à jour de l'état du matériel dans la demande
         request.equipment_state = state;
         await request.save();
@@ -119,19 +123,24 @@ exports.updateRequest = async (req, res) => {
 
     // Envoi de l'email de confirmation/refus
     if (status === 'accepted') {
-      equipment.status = 'unavailable';
+      equipment.status = request.request_type === 'rental' ? 'unavailable' : 'available';
       await equipment.save();
       request.start_date = new Date();
       request.save();
-      await sendEmail(
-        customer.email,
-        'Confirmation de réservation',
+      mailObject = request.request_type === 'rental' ? 'Confirmation de réservation' : 'Confirmation de retour';
+      mailBody = request.request_type === 'rental' ? 
         `Votre réservation pour le matériel "${equipment.name}" a été acceptée.\n
         Vous pouvez venir le récupérer dès à présent.\n
-        Merci de retourner le produit d'ici ${RENTAL_DURATION_IN_DAYS} jours à partir d'aujourd'hui.\n`
+        Merci de retourner le produit d'ici ${RENTAL_DURATION_IN_DAYS} jours à partir d'aujourd'hui.\n` :
+        `Votre retour pour le matériel "${equipment.name}" a été accepté.\n
+        Bonne journée.\n`
+      await sendEmail(
+        customer.email,
+        mailObject,
+        mailBody
       );
     } else if (status === 'denied') {
-      equipment.status = 'available';
+      equipment.status = request.request_type === 'return' ? 'unavailable' : 'available';
       await equipment.save();
       await sendEmail(
         customer.email,
