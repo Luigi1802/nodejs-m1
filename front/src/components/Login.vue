@@ -12,13 +12,14 @@
       </v-row>
 
       <v-btn type="submit" variant="outlined">Login</v-btn>
+      <v-btn variant="outlined" class="forgotpassword" to="forgot-password">Forgot password?</v-btn>
     </v-container>
   </v-form>
 </template>
 
 <script setup>
   import { ref } from 'vue'
-  import { login } from '../services/authService'
+  import { login, forgotpassword } from '../services/authService'
   import router from '../router/index.js'
   import { getUserRole } from '../utils/auth.js'
 

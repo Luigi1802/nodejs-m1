@@ -22,3 +22,12 @@ export const login = async formData => {
     return false;
   }
 }
+
+export const forgotpassword = async formData => {
+  try {
+    const response = await axios.post(AUTH_URL + 'forgot-password/', formData);
+    return response.data;
+  } catch (error) {
+    console.error('Idk whats going on', error);
+  }
+}
