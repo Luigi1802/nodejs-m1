@@ -1,35 +1,54 @@
-/**
- * router/index.ts
- *
- * Automatic routes for `./src/pages/*.vue`
- */
-
 // Composables
 import { createRouter, createWebHistory } from 'vue-router/auto'
-import { routes } from 'vue-router/auto-routes'
+import { getUserRole, isAuthenticated } from '../utils/auth.js'
+import Register from '../components/Register.vue'
+import Login from '../components/Login.vue'
+import ForgotPassword from '../components/ForgotPassword.vue'
+import CustomerDashboard from '../components/customer/CustomerDashboard.vue'
+import AdminEquipmentDashboard from '../components/admin/AdminEquipmentDashboard.vue'
+import AdminRequestDashboard from '../components/admin/AdminRequestDashboard.vue'
+
+const routes = [
+  // Pages publiques
+  { path: '/login', component: Login },
+  { path: '/register', component: Register },
+  { path: '/forgot-password', component: ForgotPassword },
+
+  // Pages admin
+  {
+    path: '/admin',
+    component: AdminEquipmentDashboard,
+    beforeEnter: (to, from, next) => {
+      if (isAuthenticated() && getUserRole() === 'admin') next()
+      else next('/login')
+    },
+  },
+  {
+    path: '/admin/users',
+    component: AdminRequestDashboard,
+    beforeEnter: (to, from, next) => {
+      if (isAuthenticated() && getUserRole() === 'admin') next()
+      else next('/login')
+    },
+  },
+
+  // Pages client
+  {
+    path: '/customer/dashboard',
+    component: CustomerDashboard,
+    beforeEnter: (to, from, next) => {
+      if (isAuthenticated() && getUserRole() === 'customer') next()
+      else next('/login')
+    },
+  },
+
+  // Redirection par défaut
+  { path: '/:pathMatch(.*)*', redirect: '/login' },
+]
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(),
   routes,
-})
-
-// Workaround for https://github.com/vitejs/vite/issues/11804
-router.onError((err, to) => {
-  if (err?.message?.includes?.('Failed to fetch dynamically imported module')) {
-    if (!localStorage.getItem('vuetify:dynamic-reload')) {
-      console.log('Reloading page to fix dynamic import error')
-      localStorage.setItem('vuetify:dynamic-reload', 'true')
-      location.assign(to.fullPath)
-    } else {
-      console.error('Dynamic import error, reloading page did not fix it', err)
-    }
-  } else {
-    console.error(err)
-  }
-})
-
-router.isReady().then(() => {
-  localStorage.removeItem('vuetify:dynamic-reload')
 })
 
 export default router
