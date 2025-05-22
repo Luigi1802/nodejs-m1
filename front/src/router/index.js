@@ -16,7 +16,7 @@ const routes = [
 
   // Pages admin
   {
-    path: '/admin',
+    path: '/admin/equipments',
     component: AdminEquipmentDashboard,
     beforeEnter: (to, from, next) => {
       if (isAuthenticated() && getUserRole() === 'admin') next()
@@ -24,7 +24,7 @@ const routes = [
     },
   },
   {
-    path: '/admin/users',
+    path: '/admin/requests',
     component: AdminRequestDashboard,
     beforeEnter: (to, from, next) => {
       if (isAuthenticated() && getUserRole() === 'admin') next()
