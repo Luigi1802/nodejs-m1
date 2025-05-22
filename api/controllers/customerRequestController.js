@@ -67,7 +67,7 @@ exports.createRequest = async (req, res) => {
 // Récupérer toutes les demandes
 exports.getRequests = async (req, res) => {
   try {
-    const requests = await CustomerRequest.find().populate('equipment');
+    const requests = await CustomerRequest.find().populate('equipment').populate({ path: 'customer', select: 'email' });
     res.json(requests);
   } catch (err) {
     res.status(500).json({ message: 'Internal server error' });
