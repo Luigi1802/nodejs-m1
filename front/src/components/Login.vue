@@ -7,18 +7,19 @@
         </v-col>
 
         <v-col cols="12" md="4">
-          <v-text-field v-model="password" label="Password" required />
+          <v-text-field type="password" v-model="password" label="Password" required />
         </v-col>
       </v-row>
 
       <v-btn type="submit" variant="outlined">Login</v-btn>
+      <v-btn variant="outlined" class="forgotpassword" to="forgot-password">Forgot password?</v-btn>
     </v-container>
   </v-form>
 </template>
 
 <script setup>
   import { ref } from 'vue'
-  import { login } from '../services/authService'
+  import { login, forgotpassword } from '../services/authService'
   import router from '../router/index.js'
   import { getUserRole } from '../utils/auth.js'
 
