@@ -7,7 +7,7 @@
         </v-col>
 
         <v-col cols="12" md="4">
-          <v-text-field v-model="password" label="Password" required />
+          <v-text-field type="password" v-model="password" label="Password" required />
         </v-col>
       </v-row>
 

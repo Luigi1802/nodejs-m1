@@ -3,39 +3,25 @@
     <v-container>
       <v-row>
         <v-col cols="12" md="4">
-          <v-text-field v-model="username" label="Username" required :rules="usernameRules" />
-        </v-col>
-
-        <v-col cols="12" md="4">
           <v-text-field v-model="email" label="Email" required :rules="emailRules" />
         </v-col>
-
-        <v-col cols="12" md="4">
-          <v-text-field v-model="password" type="password" label="Password" required />
-        </v-col>
       </v-row>
-
-      <v-btn type="submit" variant="outlined">Register</v-btn>
+      <v-btn type="submit" variant="outlined">Reset password</v-btn>
     </v-container>
   </v-form>
 </template>
 
 <script setup>
   import { ref } from 'vue'
-  import { register } from '../services/authService'
+  import { forgotpassword } from '../services/authService'
+  import router from '../router/index.js'
+  import { getUserRole } from '../utils/auth.js'
 
   // Refs
   const form = ref(null)
   const valid = ref(false)
 
-  const username = ref('')
   const email = ref('')
-  const password = ref('')
-
-  // Validation rules
-  const usernameRules = [
-    v => !!v || 'Username is required.',
-  ]
 
   const emailRules = [
     v => !!v || 'E-mail is required.',
@@ -47,16 +33,14 @@
     const isValid = await form.value?.validate()
     if (isValid) {
       const formData = {
-        username: username.value,
         email: email.value,
-        password: password.value,
       }
 
       try {
-        const result = await register(formData)
-        console.log('Registration successful:', result)
+        const result = await forgotpassword(formData)
+        router.push('/login');
       } catch (error) {
-        console.error('Registration failed:', error)
+        console.error('Register ass failed:', error)
       }
     }
   }
