@@ -16,6 +16,32 @@ export const getAllEquipments = async () => {
   }
 }
 
+export const getAllAvailableEquipments = async () => {
+  try {
+    const response = await axios.get(EQUIPMENT_URL + 'available', {
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Registration error', error);
+  }
+}
+
+export const getAllUnavailableEquipments = async () => {
+  try {
+    const response = await axios.get(EQUIPMENT_URL + 'unavailable', {
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Registration error', error);
+  }
+}
+
 export const putEquipment = async (id, formData) => {
   try {
     const response = await axios.put(EQUIPMENT_URL + id, formData, {

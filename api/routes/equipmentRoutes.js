@@ -12,6 +12,10 @@ router.post('/', authMiddleware, roleMiddleware('admin'), equipmentController.ad
 router.put('/:id', authMiddleware, roleMiddleware('admin'), equipmentController.updateEquipment);
 // DELETE /api/equipments/:id : Supprimer un équipement par son ID (admin)
 router.delete('/:id', authMiddleware, roleMiddleware('admin'), equipmentController.deleteEquipment);
+// GET /api/equipements/ : Récupérer tous les équipements available
+router.get('/available', authMiddleware, equipmentController.getAllAvailableEquipments);
+// GET /api/equipements/ : Récupérer tous les équipements loués ou en attente
+router.get('/unavailable', authMiddleware, equipmentController.getAllUnavailableEquipments);
 // GET /api/equipments/ : Récupérer tous les équipements (admin et customer)
 router.get('/', authMiddleware, equipmentController.getAllEquipment);
 

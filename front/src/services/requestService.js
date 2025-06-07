@@ -21,3 +21,15 @@ export const updateRequestStatus = async (id, status, state) => {
     },
   })
 }
+
+export const createRequest = async ({ equipment, request_type }) => {
+  const formData = { equipment, request_type };
+
+  const res = await axios.post(CUSTOMER_REQUEST_URL, formData, {
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+    },
+  });
+
+  return res.data;
+};
