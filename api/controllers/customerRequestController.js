@@ -174,3 +174,63 @@ exports.updateRequest = async (req, res) => {
     console.error(err);
   }
 };
+
+
+  // Annuler une demande (par le customer)
+exports.cancelRequest = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Recherche de la demande
+    const request = await CustomerRequest.findById(id);
+    if (!request) {
+      return res.status(404).json({ message: 'Request not found' });
+    }
+
+    // Vérification que la demande est encore en attente
+    if (request.status !== 'pending') {
+      return res.status(400).json({ message: 'Only pending requests can be cancelled' });
+    }
+
+    // Mise à jour du statut de la demande
+    request.status = 'denied';
+    await request.save();
+
+    // Mise à jour du statut de l'équipement lié (rendu à "available" uniquement si c’était une demande de location)
+    const equipment = await Equipment.findById(request.equipment);
+    if (equipment) {
+      equipment.status = request.request_type === 'rental' ? 'available' : 'unavailable';
+      await equipment.save();
+    }
+
+    res.json({ message: 'Request cancelled successfully', request });
+  } catch (err) {
+    res.status(500).json({ message: 'Internal server error' });
+    console.error(err);
+  }
+};
+
+exports.getEquipmentsToReturn = async (req, res) => {
+  try {
+    const now = new Date();
+
+    const activeRentals = await CustomerRequest.find({
+      customer: req.user.id,
+      request_type: 'rental',
+      status: 'accepted',
+      end_date: { $gte: now } // Optionnel : inclut uniquement ceux encore en cours
+    })
+    .populate({
+      path: 'equipment',
+      match: { status: 'unavailable' } // L’équipement doit toujours être loué
+    });
+
+    // Filtrer ceux dont l'équipement n'a pas été exclu par le match (donc status 'unavailable')
+    const rentalsWithEquipments = activeRentals.filter(r => r.equipment);
+
+    res.json(rentalsWithEquipments);
+  } catch (err) {
+    console.error('Error fetching equipments to return:', err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
