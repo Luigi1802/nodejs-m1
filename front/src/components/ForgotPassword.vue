@@ -40,7 +40,7 @@
         const result = await forgotpassword(formData)
         router.push('/login');
       } catch (error) {
-        console.error('Register ass failed:', error)
+        console.error('Forgotten Password email send failed:', error)
       }
     }
   }

@@ -42,6 +42,15 @@ const routes = [
     },
   },
 
+  {
+    path: '/reset-password/{id}',
+    component: CustomerDashboard,
+    beforeEnter: (to, from, next) => {
+      if (isAuthenticated()) next()
+      else next('/login')
+    },
+  },
+
   // Redirection par défaut
   { path: '/:pathMatch(.*)*', redirect: '/login' },
 ]

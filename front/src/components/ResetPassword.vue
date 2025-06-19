@@ -3,7 +3,10 @@
     <v-container>
       <v-row>
         <v-col cols="12" md="4">
-          <v-text-field v-model="email" label="Email" required :rules="emailRules" />
+          <v-text-field v-model="password" type="password" label="Password" required />
+        </v-col>
+        <v-col cols="12" md="4">
+          <v-text-field v-model="confirmpassword" type="password" label="Confirm Password" required />
         </v-col>
       </v-row>
       <v-btn type="submit" variant="outlined">Reset password</v-btn>
@@ -37,10 +40,10 @@
       }
 
       try {
-        const result = await forgotpassword(formData)
+        const result = await resetpassword(formData)
         router.push('/login');
       } catch (error) {
-        console.error('Register ass failed:', error)
+        console.error('Forgotten Password email send failed:', error)
       }
     }
   }
