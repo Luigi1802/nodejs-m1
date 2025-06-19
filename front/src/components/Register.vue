@@ -1,6 +1,7 @@
 <template>
   <v-form ref="form" v-model="valid" @submit.prevent="submitForm">
     <v-container>
+      <h1 class="text-center mb-8">Register</h1>
       <v-row>
         <v-col cols="12" md="4">
           <v-text-field v-model="username" label="Username" required :rules="usernameRules" />
@@ -11,7 +12,7 @@
         </v-col>
 
         <v-col cols="12" md="4">
-          <v-text-field v-model="password" type="password" label="Password" required />
+          <v-text-field v-model="password" label="Password" required type="password" />
         </v-col>
       </v-row>
 
@@ -23,6 +24,7 @@
 <script setup>
   import { ref } from 'vue'
   import { register } from '../services/authService'
+  import router from '../router/index.js'
 
   // Refs
   const form = ref(null)
@@ -55,6 +57,7 @@
       try {
         const result = await register(formData)
         console.log('Registration successful:', result)
+        router.push('/login');
       } catch (error) {
         console.error('Registration failed:', error)
       }

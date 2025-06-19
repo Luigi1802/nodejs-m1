@@ -165,10 +165,10 @@
   import router from '../../router/index.js'
   import { logout } from '../../utils/auth.js'
   import {
+    cancelRequest,
+    createRequest,
     getMyRequests,
     getMyRequestsToReturn,
-    cancelRequest,
-    createRequest
   } from '../../services/requestService'
 
   const requests = ref([])
@@ -227,22 +227,22 @@
 
   const handleCancelRequest = async req => {
     try {
-        await cancelRequest(req._id)
-        await fetchRequests()
+      await cancelRequest(req._id)
+      await fetchRequests()
     } catch (err) {
-        console.error('Error cancelling request:', err)
+      console.error('Error cancelling request:', err)
     }
   }
 
   const handleReturnRequest = async req => {
     try {
-        await createRequest({
-            equipment: req.equipment._id,
-            request_type: 'return',
-        });
-        await fetchRequests();
+      await createRequest({
+        equipment: req.equipment._id,
+        request_type: 'return',
+      });
+      await fetchRequests();
     } catch (err) {
-        console.error('Error creating request:', err);
+      console.error('Error creating request:', err);
     }
   }
 

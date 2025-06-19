@@ -1,6 +1,7 @@
 <template>
   <v-form ref="form" v-model="valid" @submit.prevent="submitForm">
     <v-container>
+      <h1 class="text-center mb-8">Send reset password email</h1>
       <v-row>
         <v-col cols="12" md="4">
           <v-text-field v-model="email" label="Email" required :rules="emailRules" />
