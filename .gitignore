@@ -1,0 +1,8 @@
+api/.env
+api/node_modules
+front/.env
+front/node_modules
+terraform/.terraform/*
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+terraform/.terraform.lock.hcl
