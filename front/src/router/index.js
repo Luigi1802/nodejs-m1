@@ -9,6 +9,7 @@ import CustomerRequestDashboard from '../components/customer/CustomerRequestDash
 import AdminEquipmentDashboard from '../components/admin/AdminEquipmentDashboard.vue'
 import AdminRequestDashboard from '../components/admin/AdminRequestDashboard.vue'
 import { components } from 'vuetify/dist/vuetify.js'
+import ResetPassword from '@/components/ResetPassword.vue'
 
 const routes = [
   // Pages publiques
@@ -53,12 +54,8 @@ const routes = [
   },
 
   {
-    path: '/reset-password/{id}',
-    component: CustomerDashboard,
-    beforeEnter: (to, from, next) => {
-      if (isAuthenticated()) next()
-      else next('/login')
-    },
+    path: '/reset-password/:token',
+    component: ResetPassword
   },
 
   // Redirection par défaut
