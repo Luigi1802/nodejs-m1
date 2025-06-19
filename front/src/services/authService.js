@@ -31,3 +31,12 @@ export const forgotpassword = async formData => {
     console.error('Idk whats going on', error);
   }
 }
+
+export const resetpassword = async (formData) => {
+  try {
+    const response = await axios.post(AUTH_URL + 'reset-password/', formData);
+    return response.data;
+  } catch (error) {
+    console.error('Idk whats going on', error);
+  }
+}

@@ -3,10 +3,10 @@
     <v-container>
       <v-row>
         <v-col cols="12" md="4">
-          <v-text-field v-model="password" type="password" label="Password" required />
+          <v-text-field v-model="password" type="password" label="Password" required :rules="passwordRules" />
         </v-col>
         <v-col cols="12" md="4">
-          <v-text-field v-model="confirmpassword" type="password" label="Confirm Password" required />
+          <v-text-field v-model="confirmpassword" type="password" label="Confirm Password" required :rules="passwordRules" />
         </v-col>
       </v-row>
       <v-btn type="submit" variant="outlined">Reset password</v-btn>
@@ -16,19 +16,22 @@
 
 <script setup>
   import { ref } from 'vue'
-  import { forgotpassword } from '../services/authService'
+  import { resetpassword } from '../services/authService'
   import router from '../router/index.js'
-  import { getUserRole } from '../utils/auth.js'
 
   // Refs
   const form = ref(null)
   const valid = ref(false)
+  const currentUrl = window.location.href
+  const matches = currentUrl.match("(?<=reset-password\/).+")
+  const match = matches.find((element) => element)
+  console.log(match)
 
-  const email = ref('')
+  const password = ref('')
+  const confirmpassword = ref('')
 
-  const emailRules = [
-    v => !!v || 'E-mail is required.',
-    v => /.+@.+\..+/.test(v) || 'E-mail must be valid.',
+  const passwordRules = [
+    v => !!v || 'Password is required.',
   ]
 
   // Submit handler
@@ -36,7 +39,8 @@
     const isValid = await form.value?.validate()
     if (isValid) {
       const formData = {
-        email: email.value,
+        token: match,
+        newPassword: password.value,
       }
 
       try {

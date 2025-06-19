@@ -15,7 +15,6 @@
   import { ref } from 'vue'
   import { forgotpassword } from '../services/authService'
   import router from '../router/index.js'
-  import { getUserRole } from '../utils/auth.js'
 
   // Refs
   const form = ref(null)
