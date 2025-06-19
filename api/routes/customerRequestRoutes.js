@@ -12,7 +12,11 @@ router.post('/', authMiddleware, customerRequestController.createRequest);
 router.get('/', authMiddleware, roleMiddleware('admin'), customerRequestController.getRequests);
 // GET /api/customer-requests/my-requests : Voir toutes les demandes pour un customer (customer uniquement)
 router.get('/my-requests', authMiddleware, customerRequestController.getCustomerRequests);
+// GET /api/customer-requests/my-requests-to-return : Voir toutes les demandes pour un customer (customer uniquement)
+router.get('/my-requests-to-return', authMiddleware, customerRequestController.getEquipmentsToReturn);
 // PUT /api/customer-requests/:id : Modifier une demande (accepter/refuser, admin uniquement)
 router.put('/:id', authMiddleware, roleMiddleware('admin'), customerRequestController.updateRequest);
+// PUT /api/customer-requests/:id/cancel : Annuler une demande (customer uniquement)
+router.put('/:id/cancel', authMiddleware, customerRequestController.cancelRequest);
 
 module.exports = router;

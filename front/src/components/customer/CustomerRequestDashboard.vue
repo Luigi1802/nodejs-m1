@@ -4,9 +4,9 @@
     <v-row align="center" class="mb-4" justify="space-between">
       <v-btn color="primary" @click="goToEquipments">
         <v-icon start>mdi-arrow-left</v-icon>
-        Manage equipments
+        Rent Equipments
       </v-btn>
-      <h1>Customer Requests Management</h1>
+      <h1>My Requests</h1>
     </v-row>
 
     <h2 class="mb-2">Pending Requests</h2>
@@ -14,11 +14,10 @@
       <thead>
         <tr>
           <th>Type</th>
-          <th>Customer Email</th>
           <th>Equipment</th>
-          <th>Current State</th>
-          <th>Update State</th>
-          <th>Actions</th>
+          <th>State</th>
+          <th>Status</th>
+          <th>Action</th>
         </tr>
       </thead>
       <tbody>
@@ -31,7 +30,6 @@
               size="small"
             />
           </td>
-          <td>{{ req.customer.email }}</td>
           <td>{{ req.equipment.name }} ({{ req.equipment.serial_number }})</td>
           <td style="vertical-align: middle;">
             <v-avatar
@@ -42,21 +40,67 @@
             {{ req.equipment.state }}
           </td>
           <td style="vertical-align: middle; padding-bottom: 10px;">
-            <v-select
-              v-model="updatedStates[req._id]"
-              density="compact"
-              hide-details
-              :items="states"
-              style="max-width: 120px;"
-              variant="underlined"
-            />
+            <v-icon
+              class="me-1"
+              color="#fcba03"
+              size="18"
+            >
+              mdi-radiobox-marked
+            </v-icon>
+            {{ req.equipment.status }}
           </td>
           <td style="vertical-align: middle;">
-            <v-btn class="me-2" color="success" size="small" @click="acceptRequest(req)">
-              Accept
+            <v-btn color="error" size="small" @click="handleCancelRequest(req)">
+              Cancel
             </v-btn>
-            <v-btn color="error" size="small" @click="denyRequest(req)">
-              Deny
+          </td>
+        </tr>
+      </tbody>
+    </v-table>
+
+    <h2 class="mb-2">Equipment to return</h2>
+    <v-table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Equipment</th>
+          <th>State</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="req in requestsToReturn" :key="req._id">
+          <td>
+            {{ req.request_type }}
+            <v-icon
+              class="ms-1"
+              :icon="req.request_type === 'rental' ? 'mdi-hand-coin' : 'mdi-login'"
+              size="small"
+            />
+          </td>
+          <td>{{ req.equipment.name }} ({{ req.equipment.serial_number }})</td>
+          <td style="vertical-align: middle;">
+            <v-avatar
+              class="me-2"
+              :color="getStateColor(req.equipment.state)"
+              size="12"
+            />
+            {{ req.equipment.state }}
+          </td>
+          <td style="vertical-align: middle; padding-bottom: 10px;">
+            <v-icon
+              class="me-1"
+              color="#fcba03"
+              size="18"
+            >
+              mdi-radiobox-marked
+            </v-icon>
+            {{ req.equipment.status }}
+          </td>
+          <td style="vertical-align: middle;">
+            <v-btn color="warning" size="small" @click="handleReturnRequest(req)">
+              Return
             </v-btn>
           </td>
         </tr>
@@ -68,7 +112,6 @@
       <thead>
         <tr>
           <th>Type</th>
-          <th>Customer Email</th>
           <th>Equipment</th>
           <th>Final State</th>
           <th>Status</th>
@@ -84,7 +127,6 @@
               size="small"
             />
           </td>
-          <td>{{ req.customer.email }}</td>
           <td>{{ req.equipment.name }} ({{ req.equipment.serial_number }})</td>
           <td>
             <v-avatar
@@ -123,12 +165,14 @@
   import router from '../../router/index.js'
   import { logout } from '../../utils/auth.js'
   import {
-    getAllRequests,
-    updateRequestStatus,
-  } from '../../services/requestService' // à créer si pas encore
+    getMyRequests,
+    getMyRequestsToReturn,
+    cancelRequest,
+    createRequest
+  } from '../../services/requestService'
 
   const requests = ref([])
-  const states = ['new', 'good', 'used', 'damaged', 'broken']
+  const requestsToReturn = ref([])
   const updatedStates = ref({})
 
   const getStateColor = state => {
@@ -156,12 +200,12 @@
   )
 
   const goToEquipments = () => {
-    router.push('/admin/equipments')
+    router.push('/customer/dashboard');
   }
 
   const fetchRequests = async () => {
     try {
-      const data = await getAllRequests()
+      const data = await getMyRequests()
       requests.value = data
 
       // init les valeurs de mise à jour d'état
@@ -171,25 +215,34 @@
     } catch (err) {
       console.error('Error loading requests:', err)
     }
+
+    try {
+      const data = await getMyRequestsToReturn()
+      requestsToReturn.value = data
+    } catch (err) {
+      console.error('Error loading requests to return:', err)
+    }
+
   }
 
-  const acceptRequest = async req => {
+  const handleCancelRequest = async req => {
     try {
-      const newState = updatedStates.value[req._id]
-      await updateRequestStatus(req._id, 'accepted', newState)
-      fetchRequests()
+        await cancelRequest(req._id)
+        await fetchRequests()
     } catch (err) {
-      console.error('Error accepting request:', err)
+        console.error('Error cancelling request:', err)
     }
   }
 
-  const denyRequest = async req => {
+  const handleReturnRequest = async req => {
     try {
-      const newState = updatedStates.value[req._id]
-      await updateRequestStatus(req._id, 'denied', newState)
-      fetchRequests()
+        await createRequest({
+            equipment: req.equipment._id,
+            request_type: 'return',
+        });
+        await fetchRequests();
     } catch (err) {
-      console.error('Error denying request:', err)
+        console.error('Error creating request:', err);
     }
   }
 

@@ -60,3 +60,26 @@ exports.getAllEquipment = async (req, res) => {
     console.error(err);
   }
 };
+
+// Récupérer les matériels disponibles
+exports.getAllAvailableEquipments = async (req, res) => {
+  try {
+    const availableEquipments = await Equipment.find({ status: 'available' });
+    res.json(availableEquipments);
+  } catch (err) {
+    res.status(500).json({ message: 'Internal server error' });
+    console.error(err);
+  }
+};
+
+exports.getAllUnavailableEquipments = async (req, res) => {
+  try {
+    const unavailableEquipments = await Equipment.find({ 
+      status: { $in: ['unavailable', 'pending'] } 
+    });
+    res.json(unavailableEquipments);
+  } catch (err) {
+    res.status(500).json({ message: 'Internal server error' });
+    console.error(err);
+  }
+};
