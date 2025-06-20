@@ -44,7 +44,12 @@
         memory = "1.5"
 
         ports {
-        port = 27017
+            port = 27017
+        }
+
+        environment_variables = {
+            MONGO_INITDB_ROOT_USERNAME = "admin-lab"
+            MONGO_INITDB_ROOT_PASSWORD = "9Kzas7rghm6bXeqnBEFD7Yjx7qaQFXzs6T5mc4fm"
         }
     }
 
@@ -81,7 +86,7 @@
         environment_variables = {
         PORT                                       = "5000"
         CLIENT_URL                                 = "http://frontend-lab.westeurope.azurecontainer.io"
-        MONGO_URI                                  = "mongodb://${azurerm_container_group.mongo.fqdn}:27017/lab-rental-service"
+        MONGO_URI                                  = "mongodb://admin-lab:9Kzas7rghm6bXeqnBEFD7Yjx7qaQFXzs6T5mc4fm@${azurerm_container_group.mongo.fqdn}:27017/lab-rental-service?authSource=admin"
         JWT_SECRET                                 = "secret_secret_secret"
         BREVO_LOGIN                                = "8b6c1c001@smtp-brevo.com"
         BREVO_EMAIL                                = "luigiaubrypouget@gmail.com"
