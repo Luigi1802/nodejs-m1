@@ -16,3 +16,7 @@ Compilation et envoi des images docker sur le container registry :
 Déploiement complet des conteneurs sur Azure :
 
 ```terraform apply```
+
+Suppression des ressources déployées :
+
+```terraform destroy```
